@@ -1,8 +1,15 @@
 import numpy as np
 
-def modified_mst(flow_matrix, clearance_matrix, lengths):
-   
+def generate_clearance_matrix(n, clearance_value=1.0):
+    clearance = np.full((n, n), clearance_value)
+    np.fill_diagonal(clearance, 0)
+    return clearance
+
+
+def modified_mst(flow_matrix, lengths, clearance_value=1.0):
+
     n = len(lengths)
+    clearance_matrix = generate_clearance_matrix(n, clearance_value)
 
     weight = np.zeros((n, n))
 
@@ -15,7 +22,6 @@ def modified_mst(flow_matrix, clearance_matrix, lengths):
             else:
                 weight[i, j] = -np.inf
 
-
     i_star, j_star = np.unravel_index(np.argmax(weight), weight.shape)
 
     sequence = [i_star, j_star]
@@ -24,7 +30,6 @@ def modified_mst(flow_matrix, clearance_matrix, lengths):
     weight[i_star, j_star] = -np.inf
     weight[j_star, i_star] = -np.inf
 
- 
     while len(connected) < n:
         best_value = -np.inf
         best_node = None
@@ -56,4 +61,3 @@ def modified_mst(flow_matrix, clearance_matrix, lengths):
             weight[k, best_node] = -np.inf
 
     return sequence
-
